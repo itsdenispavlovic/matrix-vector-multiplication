@@ -1,0 +1,15 @@
+/*
+Style
+
+bl - Border Left
+br - Border Right
+*/
+.bl-black
+{
+    border-left: 1px solid black;
+}
+
+.br-black
+{
+    border-right: 1px solid black;
+}

@@ -1,5 +1,6 @@
 import React from 'react';
 import Sketch from "react-p5";
+import "../style.css";
 
 /**
  * Main Component
@@ -17,7 +18,7 @@ import Sketch from "react-p5";
  * @constructor
  */
 const Main = () => {
-    let WIDTH = 1200;
+    let WIDTH = 600;
     let HEIGHT = 900;
 
     // CENTER | END | LEFT | RIGHT | START
@@ -43,7 +44,7 @@ const Main = () => {
     /**
      * Cells
      *
-     * @type {{a: *, pin: null, pout: null, xin: null, xout: null}[]}
+     * @type {{aout: null, c: number, ain: null, uin: null, uout: null}[]}
      */
     let cells = a.map(row => ({
         c: 0,
@@ -52,6 +53,65 @@ const Main = () => {
         uin: null,
         uout: null
     }));
+
+    /**
+     * Display Multi Array
+     *
+     * @param props
+     * @returns {JSX.Element}
+     * @constructor
+     */
+    const DisplayMultiArray = (props) => {
+        let arr = props.array;
+
+        let result = [];
+
+        arr.map((rowArr, rowIdx) => {
+            rowArr.map((item, colIdx) => {
+                if(item != null)
+                {
+                    result.push(
+                        <div className="col-3 mb-3">{item}</div>
+                    )
+                }
+        })
+            result.push(<br />);
+        });
+
+        return (
+            <div className="row">
+                {result}
+            </div>
+        );
+    }
+
+    /**
+     * Display Array
+     *
+     * @param props
+     * @returns {JSX.Element}
+     * @constructor
+     */
+    const DisplayArray = (props) => {
+        let arr = props.array;
+
+        let result = [];
+
+        arr.map((item, rowIdx) => {
+            if(item != null)
+            {
+                result.push(
+                    <div className="col-12 mb-3">{item}</div>
+                )
+            }
+        });
+
+        return (
+            <div className="row">
+                {result}
+            </div>
+        );
+    }
 
     /**
      * Step
@@ -63,6 +123,12 @@ const Main = () => {
             cells[i].uin = i < cells.length - 1 ? cells[i + 1].uout : inputIndex < u.length ? u[inputIndex] : 0;
         }
 
+        // c = c + (ain * uin)
+        // ain - a input
+        // uin - u input
+
+        // u - jos in sus
+        // a - dreapta in stanga
 
         // Execute the algorithm and update the register and the out
         for (let i = 0; i < cells.length; i++) {
@@ -83,10 +149,6 @@ const Main = () => {
     let setup = (p5, canvasParentRef) => {
         //Canvas of size WIDTHxHEIGHT
         p5.createCanvas(WIDTH, HEIGHT).parent(canvasParentRef);
-
-        p5.mouseClicked = () => {
-            step();
-        }
     };
 
     /**
@@ -139,16 +201,52 @@ const Main = () => {
         p5.textAlign(CENTER, TOP);
         for (let i = inputIndex; i < u.length; i++)
             p5.text(u[i], WIDTH / 2, 100 + 160 * cells.length + 25 * (i - inputIndex));
-
-        p5.textAlign(CENTER, BOTTOM)
-        p5.textSize(18)
-        p5.text('Click to advance', WIDTH / 2, HEIGHT - 10)
-
     };
 
     return (
         <div className="App">
-            <Sketch setup={setup} draw={draw} className="App" />
+            <h3 className="text-center mt-2">
+                Matrix Vector Multiplication
+            </h3>
+            <div className="container">
+                <div className="row">
+                    <div className="col-8">
+                        <Sketch setup={setup} draw={draw} className="App" />
+                    </div>
+                    <div className="col-4">
+                        <div className="mt-4 text-center">
+                            <button
+                                className="btn btn-info"
+                                onClick={step}
+                            >
+                                Click to advantage
+                            </button>
+                        </div>
+                        <hr/>
+                        <div className="row">
+                            <div className="col-4 d-flex justify-content-center align-items-center">
+                                A =
+                            </div>
+                            <div className="col-8 bl-black br-black">
+                                <DisplayMultiArray
+                                    array={a}
+                                />
+                            </div>
+                        </div>
+                        <hr />
+                        <div className="row">
+                            <div className="col-4 d-flex justify-content-center align-items-center">
+                                u =
+                            </div>
+                            <div className="col-2 bl-black br-black text-center">
+                                <DisplayArray
+                                    array={u}
+                                />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     );
 }
